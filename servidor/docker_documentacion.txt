@@ -1,0 +1,163 @@
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis:6379/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+    },
+    'axes': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://redis:6379/1',
+    },
+}
+
+
+
+1. Gmail SMTP (recomendado para desarrollos pequeños)
+Ventajas:
+
+Gratuito para enviar hasta 500 correos electrónicos al día (si usas tu cuenta de Google).
+
+Puedes usarlo en tu máquina local y en Docker.
+
+La integración con Google es directa, por lo que si también necesitas hacer autenticación con Google, ya está listo.
+
+Configuración:
+
+Para usar Gmail en tu configuración de Django, en settings.py puedes poner lo siguiente:
+
+python
+Copiar
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tu-correo@gmail.com'  # Tu correo de Gmail
+EMAIL_HOST_PASSWORD = 'tu-contraseña-de-aplicaciones'  # Contraseña de aplicaciones (ver abajo)
+DEFAULT_FROM_EMAIL = 'tu-correo@gmail.com'
+Paso importante: Si usas Gmail, necesitarás habilitar el acceso de aplicaciones menos seguras o generar una contraseña de aplicaciones. Google recomienda no usar la contraseña principal de tu cuenta, sino generar una contraseña específica para la aplicación:
+
+Ve a Tu cuenta de Google.
+
+Entra a Seguridad.
+
+Activa Verificación en dos pasos si no la tienes.
+
+Luego, ve a Contraseñas de aplicaciones y genera una para la aplicación que uses (en este caso, Django).
+
+2. Sendinblue (opción gratuita para envíos limitados)
+Ventajas:
+
+Plan gratuito con 300 correos electrónicos por día.
+
+No necesita credenciales de Google y tiene una integración sencilla.
+
+Enviar correos desde tu aplicación sin preocuparte de la seguridad de la cuenta de Google.
+
+Configuración: Primero, debes crear una cuenta en Sendinblue aquí.
+
+Luego, en settings.py, puedes configurar Sendinblue SMTP de la siguiente manera:
+
+python
+Copiar
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-relay.sendinblue.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tu-correo@sendinblue.com'  # Tu correo de Sendinblue
+EMAIL_HOST_PASSWORD = 'tu-contraseña-api'  # Tu clave API (ve a tu cuenta Sendinblue para obtenerla)
+DEFAULT_FROM_EMAIL = 'tu-correo@sendinblue.com'
+Nota: En Sendinblue, en lugar de una contraseña SMTP, usas una clave API que puedes generar desde tu cuenta de Sendinblue.
+
+3. Mailgun (opción para más correos, pero con limitaciones gratuitas)
+Ventajas:
+
+Ofrece 5,000 correos gratuitos durante los primeros tres meses.
+
+Es muy popular para aplicaciones que requieren enviar un gran volumen de correos.
+
+Configuración: Para Mailgun, debes registrarte en Mailgun, y seguir sus instrucciones para configurar tu dominio y obtener las credenciales. Luego, puedes configurar tu settings.py como sigue:
+
+python
+Copiar
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'postmaster@tu-dominio.mailgun.org'
+EMAIL_HOST_PASSWORD = 'tu-contraseña-api'
+DEFAULT_FROM_EMAIL = 'tu-dominio@mailgun.org'
+Paso 2: Uso de Google para autenticación (Google OAuth 2.0)
+Si necesitas que los usuarios inicien sesión mediante Google (como mencionas en tu pregunta), deberás integrar Google OAuth 2.0 en tu proyecto Django.
+
+Puedes usar la biblioteca django-allauth, que tiene soporte integrado para la autenticación con Google. Aquí están los pasos básicos:
+
+Instalar Django Allauth:
+
+Si no lo tienes ya instalado, instala django-allauth:
+
+bash
+Copiar
+pip install django-allauth
+Configurar settings.py:
+
+En tu archivo settings.py, configura django-allauth para trabajar con Google OAuth:
+
+python
+Copiar
+INSTALLED_APPS = [
+    # Otros apps...
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+]
+
+AUTHENTICATION_BACKENDS = (
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+LOGIN_REDIRECT_URL = '/'  # Página a la que redirigir después de login
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'OAUTH_PKCE_ENABLED': True,  # Habilitar PKCE para mayor seguridad
+    }
+}
+Registrar tu aplicación en Google Cloud Console:
+
+Ve a Google Cloud Console.
+
+Crea un nuevo proyecto o selecciona uno existente.
+
+Ve a API y servicios > Pantalla de consentimiento OAuth y configura los detalles.
+
+Luego, ve a Credenciales, crea un ID de cliente OAuth 2.0 y genera las credenciales.
+
+Agrega tu Redirect URI que tendrá este formato: http://localhost:8000/accounts/google/login/callback/ (ajustado a tu configuración de servidor).
+
+Configurar las credenciales en Django:
+
+En tu settings.py, agrega las credenciales de Google:
+
+python
+Copiar
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '<tu-client-id>'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '<tu-client-secret>'
+Resumen:
+Para SMTP gratuito, puedes usar Gmail SMTP, Sendinblue, o Mailgun.
+
+Si necesitas la autenticación con Google, django-allauth es la opción más sencilla.
+
+Configura las credenciales de Google en Google Cloud Console para habilitar OAuth 2.0 y permitir el inicio de sesión con Google.
+
+Alternativa para Producción (Docker en DigitalOcean):
+Cuando vayas a hacer el deploy en DigitalOcean (o cualquier otra infraestructura), puedes mantener la misma configuración SMTP. Sin embargo, si tu proyecto crece y necesitas más envíos de correo, puedes optar por servicios de pago o usar otras soluciones escalables como Amazon SES, Mailgun, o SendGrid.
+
+

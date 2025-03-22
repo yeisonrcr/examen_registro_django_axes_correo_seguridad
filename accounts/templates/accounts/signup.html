@@ -1,0 +1,30 @@
+{% load i18n %}
+{% load account %}
+
+<h2>{% trans "Registro" %}</h2>
+
+<form method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+    
+    <div>
+        <label for="id_email">{% trans "Correo Electrónico" %}</label>
+        <input type="email" name="email" id="id_email" required>
+    </div>
+    
+    <div>
+        <label for="id_password1">{% trans "Contraseña" %}</label>
+        <input type="password" name="password1" id="id_password1" required>
+    </div>
+    
+    <div>
+        <label for="id_password2">{% trans "Confirmar Contraseña" %}</label>
+        <input type="password" name="password2" id="id_password2" required>
+    </div>
+    
+    <button type="submit">{% trans "Registrarse" %}</button>
+</form>
+
+<p>
+    {% trans "¿Ya tienes una cuenta?" %} 
+    <a href="{{ login_url }}">{% trans "Iniciar Sesión" %}</a>
+</p>

@@ -1,0 +1,27 @@
+Esta configuración permite que el sistema utilice múltiples backends de autenticación:
+
+    ModelBackend: Valida credenciales usando el modelo de usuario estándar.
+
+    AuthenticationBackend de Allauth: Permite autenticación adicional, como inicio de sesión mediante cuentas sociales (Google, Facebook, etc.).
+
+    AxesBackend: Añade seguridad, detectando intentos de inicio de sesión sospechosos (ataques de fuerza bruta).
+
+
+
+
+
+
+SITE_ID = 1 para example.com
+SITE_ID = 2 para blog.example.com
+SITE_ID es una configuración en Django usada por la aplicación 
+
+
+Como ya incluiste path('accounts/', include('allauth.urls')) en tu archivo urls.py, allauth se encargará automáticamente de las siguientes rutas:
+    /accounts/login/: Página de inicio de sesión.
+    /accounts/logout/: Página para cerrar sesión.
+    /accounts/signup/: Página para registro de usuarios.
+    Otras rutas para autenticación social, como /accounts/google/login/.
+
+No necesitas agregarlas manualmente. Solo asegúrate de que estas rutas funcionen correctamente.
+
+

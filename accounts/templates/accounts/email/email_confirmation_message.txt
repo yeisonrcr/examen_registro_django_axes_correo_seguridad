@@ -1,0 +1,10 @@
+¡Bienvenido a nuestra plataforma de Gestión Empresarial!
+
+Para activar tu cuenta, por favor confirma tu dirección de correo electrónico haciendo clic en el siguiente enlace:
+
+{{ activate_url }}
+
+Si no solicitaste esta cuenta, ignora este mensaje.
+
+Saludos,
+Equipo de Gestión Empresarial

@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<h2>{% trans "Verifica tu Correo Electrónico" %}</h2>
+
+<p>
+    {% trans "Hemos enviado un correo electrónico de verificación a tu dirección de correo. Por favor, revisa tu bandeja de entrada y sigue las instrucciones para verificar tu cuenta." %}
+</p>
+
+<p>
+    <a href="{% url 'account_login' %}">{% trans "Volver a Iniciar Sesión" %}</a>
+</p>
+
+

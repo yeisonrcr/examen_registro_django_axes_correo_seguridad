@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load account socialaccount %}
+
+<h2>{% trans "Iniciar Sesión" %}</h2>
+
+<form method="post" action="{% url 'account_login' %}">
+    {% csrf_token %}
+    
+    <div>
+        <label for="id_login">{% trans "Correo Electrónico" %}</label>
+        <input type="email" name="login" id="id_login" required>
+    </div>
+    
+    <div>
+        <label for="id_password">{% trans "Contraseña" %}</label>
+        <input type="password" name="password" id="id_password" required>
+    </div>
+    
+    <div>
+        <input type="checkbox" name="remember" id="id_remember">
+        <label for="id_remember">{% trans "Recordarme" %}</label>
+    </div>
+    
+    <button type="submit">{% trans "Iniciar Sesión" %}</button>
+</form>
+
+<p>
+    <a href="{% url 'account_reset_password' %}">{% trans "¿Olvidaste tu contraseña?" %}</a>
+</p>
+
+<p>
+    {% trans "¿No tienes una cuenta?" %} 
+    <a href="{{ signup_url }}">{% trans "Registrarse" %}</a>
+</p>

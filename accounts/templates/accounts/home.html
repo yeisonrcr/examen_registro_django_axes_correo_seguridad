@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<h1>{% trans "Bienvenido" %}</h1>
+
+{% if user.is_authenticated %}
+    <p>{% trans "Has iniciado sesión correctamente" %}</p>
+    <a href="{% url 'listar_empresas' %}">{% trans "Ir a Mis Empresas" %}</a>
+    <a href="{% url 'account_logout' %}">{% trans "Cerrar Sesión" %}</a>
+{% else %}
+    <p>{% trans "Por favor" %} <a href="{% url 'account_login' %}">{% trans "inicia sesión" %}</a> {% trans "o" %} <a href="{% url 'account_signup' %}">{% trans "regístrate" %}</a>.</p>
+{% endif %}
